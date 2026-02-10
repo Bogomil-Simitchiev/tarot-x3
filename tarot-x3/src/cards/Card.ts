@@ -46,11 +46,9 @@ export class Card extends Container {
     this.hit.buttonMode = true;
 
     this.addChild(this.hit);
-
-    // size
+    
     this.scale.set(0.35);
 
-    // initial 3D tilt (SAFE)
     this.view3D.scale.y = 0.9;
   }
 

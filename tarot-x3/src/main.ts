@@ -12,7 +12,25 @@ function start() {
 
   document.body.appendChild(app.view);
 
-  new Game(app);
+  PIXI.Loader.shared
+    .add('table', '/assets/table.jpg')
+    .load(() => {
+      const texture = PIXI.Loader.shared.resources['table'].texture!;
+      const bg = new PIXI.Sprite(texture);
+
+      bg.anchor.set(0.5, 0);
+      bg.position.set(app.screen.width / 2, 0);
+
+      const scaleX = app.screen.width / texture.width;
+      const scaleY = app.screen.height / texture.height;
+      bg.scale.set(Math.max(scaleX, scaleY));
+
+      bg.interactive = false;
+
+      app.stage.addChild(bg);
+
+      new Game(app);
+    });
 }
 
 start();
