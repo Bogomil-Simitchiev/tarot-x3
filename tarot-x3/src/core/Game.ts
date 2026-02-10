@@ -1,11 +1,22 @@
-import { Application } from 'pixi.js';
-import { GameState } from './GameState';
+import { CardManager } from "../cards/CardManager";
+import { Application } from "pixi.js";
+import { GameState } from "./GameState";
 
 export class Game {
   private state: GameState = GameState.Idle;
+  private cardManager!: CardManager;
 
   constructor(private app: Application) {
-    this.changeState(GameState.Idle);
+    this.cardManager = new CardManager();
+    this.app.stage.addChild(this.cardManager);
+
+    this.cardManager.on("allRevealed", (multipliers: number[]) => {
+      this.changeState(GameState.Result);
+    });
+    this.cardManager.position.set(
+      this.app.screen.width / 2,
+      this.app.screen.height / 2,
+    );
   }
 
   changeState(newState: GameState) {
@@ -37,6 +48,7 @@ export class Game {
     setTimeout(() => {
       this.changeState(GameState.Reveal);
     }, 500);
+    this.cardManager.prepareRound();
   }
 
   private onReveal() {
@@ -45,8 +57,11 @@ export class Game {
 
   private onResult() {
     // Show payout
+    console.log("Result state");
+
+    // тук по-късно ще е UI popup
     setTimeout(() => {
       this.changeState(GameState.Idle);
-    }, 1500);
+    }, 2000);
   }
 }
