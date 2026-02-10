@@ -1,10 +1,13 @@
 import { CardManager } from "../cards/CardManager";
+import { PlayButton } from "../ui/PlayButton";
+
 import { Application } from "pixi.js";
 import { GameState } from "./GameState";
 
 export class Game {
   private state: GameState = GameState.Idle;
   private cardManager!: CardManager;
+  private playButton!: PlayButton;
 
   constructor(private app: Application) {
     this.cardManager = new CardManager();
@@ -13,10 +16,22 @@ export class Game {
     this.cardManager.on("allRevealed", (multipliers: number[]) => {
       this.changeState(GameState.Result);
     });
+
     this.cardManager.position.set(
       this.app.screen.width / 2,
       this.app.screen.height / 2,
     );
+
+    this.playButton = new PlayButton(() => {
+      this.changeState(GameState.RoundStart);
+    });
+
+    this.playButton.position.set(
+      this.app.screen.width / 2,
+      this.app.screen.height - 80,
+    );
+
+    this.app.stage.addChild(this.playButton);
   }
 
   changeState(newState: GameState) {
@@ -40,15 +55,14 @@ export class Game {
   }
 
   private onIdle() {
-    // Play button enabled
+    this.playButton.visible = true;
   }
 
   private onRoundStart() {
-    // Prepare cards
-    setTimeout(() => {
-      this.changeState(GameState.Reveal);
-    }, 500);
+    this.playButton.visible = false;
     this.cardManager.prepareRound();
+
+    this.changeState(GameState.Reveal);
   }
 
   private onReveal() {
