@@ -118,6 +118,6 @@ export class Game {
 
     setTimeout(() => {
       this.changeState(GameState.Idle);
-    }, 6000);
+    }, 7000);
   }
 }
