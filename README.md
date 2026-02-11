@@ -21,6 +21,7 @@ The focus is on smooth **3D-ish card flips** and satisfying animations✨
 ---
 
 ## Tech Stack🛠️
+
 - **PixiJS** 6.5.9
 - **pixi-projection** 1.0.0
 - **GSAP** (3.13.0) for animations
@@ -118,7 +119,7 @@ If I had more time:
  
 ---
 
-### File Structure📁
+## File Structure📁
 - /src       → TypeScript source code
 - /public/images    → favicon
 - /public/assets    → Card images (back, gold and blue), table texture
