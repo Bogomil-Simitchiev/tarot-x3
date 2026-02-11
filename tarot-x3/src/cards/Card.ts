@@ -2,6 +2,7 @@ import { Container, Sprite, Texture } from 'pixi.js';
 import { Container3d } from 'pixi-projection';
 import gsap from 'gsap';
 import { CardType } from './CardTypes';
+import { asDisplay } from '../helpers/helpers';
 
 export class Card extends Container {
   private view3D: Container3d;
@@ -26,7 +27,7 @@ export class Card extends Container {
 
     // 3D container (NO EVENTS)
     this.view3D = new Container3d();
-    this.addChild(this.view3D);
+    this.addChild(asDisplay(this.view3D));
 
     this.back = new Sprite(backTexture);
     this.front = new Sprite(frontTexture);
@@ -35,8 +36,8 @@ export class Card extends Container {
     this.back.anchor.set(0.5);
     this.front.anchor.set(0.5);
 
-    this.view3D.addChild(this.back);
-    this.view3D.addChild(this.front);
+    this.view3D.addChild(asDisplay(this.back));
+    this.view3D.addChild(asDisplay(this.front));
 
     // hit area (ONLY interactive object)
     this.hit = new Sprite(backTexture);

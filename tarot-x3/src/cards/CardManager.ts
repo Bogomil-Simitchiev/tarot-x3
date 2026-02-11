@@ -34,7 +34,7 @@ export class CardManager extends Container {
     this.revealedCount = 0;
 
     this.cards.forEach((card) => {
-      const data = pickWeighted(paytable[card.type.toLowerCase()]);
+      const data = pickWeighted(paytable[card.type]);
 
       card.setMultiplier(data.value);
       card.reset();
