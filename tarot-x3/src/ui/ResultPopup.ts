@@ -1,5 +1,12 @@
-import { Container, Graphics, Text, TextStyle } from 'pixi.js';
-import gsap from 'gsap';
+import { Container, Graphics, Text, TextStyle } from "pixi.js";
+import gsap from "gsap";
+
+export interface ResultData {
+  multipliers: number[];
+  product: number;
+  bet: number;
+  payout: number;
+}
 
 export class ResultPopup extends Container {
   private text: Text;
@@ -14,11 +21,11 @@ export class ResultPopup extends Container {
       .endFill();
 
     this.text = new Text(
-      '',
+      "",
       new TextStyle({
         fill: 0xffffff,
         fontSize: 20,
-        align: 'center',
+        align: "center",
       })
     );
     this.text.anchor.set(0.5);
@@ -26,14 +33,23 @@ export class ResultPopup extends Container {
     this.addChild(bg, this.text);
   }
 
-  show(multipliers: number[], bet = 1) {
-    const product = multipliers.reduce((a, b) => a * b, 1);
-    const payout = bet * product;
+  /**
+   * Shows result popup.
+   * NOTE: No calculations here – Game already did them.
+   */
+  show(data: ResultData) {
+    const { multipliers, product, bet, payout } = data;
+
+    // Safety guard (never crash)
+    const safeMultipliers = Array.isArray(multipliers)
+      ? multipliers
+      : [];
 
     this.text.text =
-      `Multipliers:\n${multipliers.map(m => `x${m}`).join(' ')}\n\n` +
+      `Bet: ${bet} EUR\n\n` +
+      `Multipliers:\n${safeMultipliers.map(m => `x${m}`).join(" ")}\n\n` +
       `Product: x${product.toFixed(2)}\n` +
-      `Payout: ${payout.toFixed(2)}`;
+      `Payout: ${payout.toFixed(2)} EUR`;
 
     this.visible = true;
     this.alpha = 0;
@@ -48,7 +64,7 @@ export class ResultPopup extends Container {
       x: 1,
       y: 1,
       duration: 0.4,
-      ease: 'back.out(1.7)',
+      ease: "back.out(1.7)",
     });
   }
 

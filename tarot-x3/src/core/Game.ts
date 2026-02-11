@@ -6,47 +6,73 @@ import { GameState } from "./GameState";
 
 export class Game {
   private state: GameState = GameState.Idle;
+  private bet = 1;
 
   private cardManager: CardManager;
   private playButton: PlayButton;
   private resultPopup: ResultPopup;
 
   constructor(private app: Application) {
-    /** Cards */
+    /** ================= CARDS ================= */
     this.cardManager = new CardManager();
     this.cardManager.position.set(
       this.app.screen.width / 2,
-      this.app.screen.height / 2,
+      this.app.screen.height / 2
     );
     this.app.stage.addChild(this.cardManager);
 
-    /** Button */
+    /** ================= BUTTON ================= */
     this.playButton = new PlayButton(() => {
-      this.changeState(GameState.RoundStart);
+      if (this.state === GameState.Idle) {
+        this.changeState(GameState.RoundStart);
+      }
     });
+
     this.playButton.position.set(
       this.app.screen.width / 2,
-      this.app.screen.height - 80,
+      this.app.screen.height - 80
     );
     this.app.stage.addChild(this.playButton);
 
-    /** Result popup */
+    /** ================= RESULT POPUP ================= */
     this.resultPopup = new ResultPopup();
     this.resultPopup.position.set(
       this.app.screen.width / 2,
-      this.app.screen.height / 2,
+      this.app.screen.height / 2
     );
     this.app.stage.addChild(this.resultPopup);
 
-    /** Events */
+    /** ================= EVENTS ================= */
     this.cardManager.on("allRevealed", (multipliers: number[]) => {
-      this.resultPopup.show(multipliers);
+      // 🔒 safety guard
+      if (this.state !== GameState.Reveal) return;
+      if (!Array.isArray(multipliers)) return;
+
+      const product = multipliers.reduce((acc, val) => acc * val, 1);
+      const payout = product * this.bet;
+
+      this.resultPopup.show({
+        multipliers,
+        product,
+        bet: this.bet,
+        payout,
+      });
+
       this.changeState(GameState.Result);
     });
 
     /** Initial state */
     this.changeState(GameState.Idle);
   }
+
+  /** ================= PUBLIC ================= */
+
+  public setBet(value: number) {
+    // 🧮 safety
+    this.bet = Math.max(1, Number(value) || 1);
+  }
+
+  /** ================= FSM ================= */
 
   private changeState(newState: GameState) {
     console.log(`STATE: ${this.state} → ${newState}`);
@@ -74,6 +100,7 @@ export class Game {
   private onIdle() {
     this.playButton.visible = true;
     this.cardManager.disableInput();
+    this.resultPopup.hide(); // 🧼 important
   }
 
   private onRoundStart() {
@@ -87,7 +114,7 @@ export class Game {
   }
 
   private onReveal() {
-    // Cards can now be clicked
+    // 👆 cards are clickable only here
     this.cardManager.enableInput();
   }
 
