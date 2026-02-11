@@ -44,7 +44,7 @@ export class Game {
 
     /** ================= EVENTS ================= */
     this.cardManager.on("allRevealed", (multipliers: number[]) => {
-      // 🔒 safety guard
+      // safety guard
       if (this.state !== GameState.Reveal) return;
       if (!Array.isArray(multipliers)) return;
 
@@ -61,18 +61,14 @@ export class Game {
       this.changeState(GameState.Result);
     });
 
-    /** Initial state */
     this.changeState(GameState.Idle);
   }
 
   /** ================= PUBLIC ================= */
 
   public setBet(value: number) {
-    // 🧮 safety
     this.bet = Math.max(1, Number(value) || 1);
   }
-
-  /** ================= FSM ================= */
 
   private changeState(newState: GameState) {
     console.log(`STATE: ${this.state} → ${newState}`);
@@ -100,7 +96,7 @@ export class Game {
   private onIdle() {
     this.playButton.visible = true;
     this.cardManager.disableInput();
-    this.resultPopup.hide(); // 🧼 important
+    this.resultPopup.hide();
   }
 
   private onRoundStart() {
@@ -114,7 +110,6 @@ export class Game {
   }
 
   private onReveal() {
-    // 👆 cards are clickable only here
     this.cardManager.enableInput();
   }
 
@@ -123,6 +118,6 @@ export class Game {
 
     setTimeout(() => {
       this.changeState(GameState.Idle);
-    }, 3000);
+    }, 6000);
   }
 }

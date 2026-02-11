@@ -1,13 +1,6 @@
 import { Container, Graphics, Text, TextStyle } from "pixi.js";
 import gsap from "gsap";
-
-export interface ResultData {
-  multipliers: number[];
-  product: number;
-  bet: number;
-  payout: number;
-}
-
+import type { ResultData } from "../interfaces/interfaces";
 export class ResultPopup extends Container {
   private text: Text;
 
@@ -33,14 +26,9 @@ export class ResultPopup extends Container {
     this.addChild(bg, this.text);
   }
 
-  /**
-   * Shows result popup.
-   * NOTE: No calculations here – Game already did them.
-   */
   show(data: ResultData) {
     const { multipliers, product, bet, payout } = data;
-
-    // Safety guard (never crash)
+    
     const safeMultipliers = Array.isArray(multipliers)
       ? multipliers
       : [];
