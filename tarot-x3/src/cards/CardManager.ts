@@ -12,7 +12,7 @@ export class CardManager extends Container {
   constructor() {
     super();
 
-    const types: CardType[] = [CardType.Gold, CardType.Gold, CardType.Blue];
+    const types: CardType[] = [CardType.Blue, CardType.Gold, CardType.Blue];
 
     types.forEach((type, index) => {
       const card = new Card(type);
