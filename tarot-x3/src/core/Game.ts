@@ -3,6 +3,7 @@ import { CardManager } from "../cards/CardManager";
 import { PlayButton } from "../ui/PlayButton";
 import { ResultPopup } from "../ui/ResultPopup";
 import { GameState } from "./GameState";
+import { ResponsiveManager } from "./ResponsiveManager";
 
 export class Game {
   private state: GameState = GameState.Idle;
@@ -11,14 +12,18 @@ export class Game {
   private cardManager: CardManager;
   private playButton: PlayButton;
   private resultPopup: ResultPopup;
+  private responsiveManager: ResponsiveManager;
 
   constructor(private app: Application) {
+    // Initialize responsive manager first
+    this.responsiveManager = new ResponsiveManager(app);
+
+    const baseWidth = this.responsiveManager.getBaseWidth();
+    const baseHeight = this.responsiveManager.getBaseHeight();
+
     /** ================= CARDS ================= */
     this.cardManager = new CardManager();
-    this.cardManager.position.set(
-      this.app.screen.width / 2,
-      this.app.screen.height / 2
-    );
+    this.cardManager.position.set(baseWidth / 2, baseHeight / 2);
     this.app.stage.addChild(this.cardManager);
 
     /** ================= BUTTON ================= */
@@ -28,18 +33,12 @@ export class Game {
       }
     });
 
-    this.playButton.position.set(
-      this.app.screen.width / 2,
-      this.app.screen.height - 80
-    );
+    this.playButton.position.set(baseWidth / 2, baseHeight - 80);
     this.app.stage.addChild(this.playButton);
 
     /** ================= RESULT POPUP ================= */
     this.resultPopup = new ResultPopup();
-    this.resultPopup.position.set(
-      this.app.screen.width / 2,
-      this.app.screen.height / 2
-    );
+    this.resultPopup.position.set(baseWidth / 2, baseHeight / 2);
     this.app.stage.addChild(this.resultPopup);
 
     /** ================= EVENTS ================= */
@@ -68,6 +67,10 @@ export class Game {
 
   public setBet(value: number) {
     this.bet = Math.max(1, Number(value) || 1);
+  }
+
+  public getResponsiveManager(): ResponsiveManager {
+    return this.responsiveManager;
   }
 
   private changeState(newState: GameState) {
