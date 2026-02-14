@@ -49,32 +49,49 @@ export class Card extends Container {
     this.addChild(this.hit);
     
     this.scale.set(0.35);
-
     this.view3D.scale.y = 0.9;
   }
 
   flip(onComplete?: () => void) {
     if (this.revealed) return;
 
-    gsap.timeline()
-      .to(this.view3D.scale, {
-        x: 0,
-        duration: 0.25,
-        ease: 'power2.in',
-        onComplete: () => {
-          this.back.visible = false;
-          this.front.visible = true;
-        },
-      })
-      .to(this.view3D.scale, {
-        x: 1,
-        duration: 0.25,
-        ease: 'power2.out',
-        onComplete: () => {
-          this.revealed = true;
-          onComplete?.();
-        },
-      });
+    const timeline = gsap.timeline();
+
+    // Подскачане нагоре
+    timeline.to(this.view3D, {
+      y: -120,
+      duration: 0.20,
+      ease: 'power2.out',
+    });
+
+    // Rotate to edge (scale.x = 0)
+    timeline.to(this.view3D.scale, {
+      x: 0,
+      duration: 0.25,
+      ease: 'power2.in',
+      onComplete: () => {
+        this.back.visible = false;
+        this.front.visible = true;
+      },
+    });
+    
+    // Rotate from edge back (scale.x = 1)
+    timeline.to(this.view3D.scale, {
+      x: 1,
+      duration: 0.40,
+      ease: 'power2.out',
+    });
+
+    // Връщане надолу с bounce
+    timeline.to(this.view3D, {
+      y: 0,
+      duration: 0.25,
+      ease: 'bounce.out',
+      onComplete: () => {
+        this.revealed = true;
+        onComplete?.();
+      },
+    });
   }
 
   onClick(cb: () => void) {
@@ -90,5 +107,6 @@ export class Card extends Container {
     this.front.visible = false;
     this.back.visible = true;
     this.view3D.scale.set(1, 0.9);
+    this.view3D.y = 0;
   }
 }
